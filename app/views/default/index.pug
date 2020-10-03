@@ -8,20 +8,23 @@ block content
         a.back(href=parent)
           i.ic.ic-back(style="color:#333;font-size:18px;")
       a.home(href='/')= _config_('title')
-      -if(writeable)
-        .upload-menu
+      .upload-menu
+        -if(writeable)
           a
             i.ic.ic-upload-folder
             input(type="file",multiple="",webkitdirectory="",directory="",name="file")
           a
             i.ic.ic-upload
             input(type="file",multiple="",name="file")
+        -if(downloadable)
+          a(href='?download',title="下载文件夹")
+            i.ic.ic-folder-download
   section.wrap
     .list-header
       .row
-        .col-md-7.col-sm-6.col-xs-8= __('filename')
-        .col-md-2.col-sm-2.col-xs-4.text-right= __('size')
-        .col-md-3.col-sm-4.hidden-xs.text-right= __('last_modified')
+        .col-md-7.col-sm-6.col-xs-8(data-sort="name")= __('filename')
+        .col-md-2.col-sm-2.col-xs-4.text-right(data-sort="size")= __('size')
+        .col-md-3.col-sm-4.hidden-xs.text-right(data-sort="time")= __('last_modified')
     ul.list
       each i in data
         li
@@ -39,8 +42,10 @@ block content
     section.wrap(style="margin-top:64px;border-top:1px solid #eee;")
       article.markdown-body(style="padding:32px;")
         | !{readme}
+  script(src='https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js')
+  script(src='/script/sort.js')
+
   -if(writeable)
-    script(src='https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js')
     script(src='/script/upload.js')
   include partial/footer
 

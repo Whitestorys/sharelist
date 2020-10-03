@@ -3,7 +3,7 @@ const os = require('os')
 const { createFiledb } = require('./utils/db/filedb');
 const configPath = process.cwd() +'/cache/config.json'
 const port = process.env.PORT || 33001
-const runtime = {}
+var runtime = {}
 
 const db = createFiledb(configPath , {raw:true} , {
   port , 
@@ -11,6 +11,8 @@ const db = createFiledb(configPath , {raw:true} , {
   proxy_enable : 0 ,
 
   preview_enable : 1,
+
+  index_enable:1,
 
   webdav_path : '/webdav/',
   //目录刷新时间 15分钟getDrive
@@ -37,6 +39,8 @@ const db = createFiledb(configPath , {raw:true} , {
 
   anonymous_uplod_enable:0,
 
+  anonymous_download:'',
+
   plugin_option:[],
 
   custom_style:'',
@@ -47,6 +51,8 @@ const db = createFiledb(configPath , {raw:true} , {
   proxy_paths:[],
 
   proxy_server:'',
+
+  ocr_server:'https://api.reruin.net/ocr'
 });
 
 if(process.env.PORT){
@@ -76,8 +82,10 @@ const getAllConfig = (key) => db.all
 
 const getPath = () => [].concat( db.get('path') || [] )
 
-const getRuntime = (key) => {
-  return runtime[key]
+const getRuntime = () => runtime
+
+const setRuntime = (value) => {
+  runtime = value
 }
 
 const getSkin = (key) => {
@@ -101,9 +109,6 @@ const setPluginOption = (key , value) => {
   db.save()
 }
 
-const setRuntime = (key , value) => {
-  runtime[key] = value
-}
 
 const saveDrive = (value , name) => {
   if(!name) name = decodeURIComponent(runtime.req.path.replace(/^\//g,''))

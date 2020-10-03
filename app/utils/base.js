@@ -6,6 +6,8 @@ const crypto = require('crypto')
 
 const md = require('markdown-it')()
 
+const parseXML = require('xml2js').parseString
+
 const rnd = (min, max) => Math.floor(min + Math.random() * (max - min))
 
 const isType = (type) => (obj) => (Object.prototype.toString.call(obj) === `[object ${type}]`)
@@ -133,6 +135,29 @@ const md5 = (v) => {
   return crypto.createHash('md5').update(v).digest('hex')
 }
 
+const { StringDecoder } = require('string_decoder');
+
+const parseStream = (stream , encoding = 'utf-8') => new Promise((resolve , reject) => {
+  let str = ''
+  const decoder = new StringDecoder(encoding);
+  stream.on('data' , (chunk) => {
+    str += decoder.write(chunk);
+  })
+
+  stream.on('end' , () => {
+    resolve(str)
+  })
+})
+
+const xml2json = ( xml , options = {}) => {
+  return new Promise((resolve , reject) => {
+    parseXML(xml, options, (err, res) => {
+      if (err) resolve(null)
+      else resolve(res)
+    })
+  })
+}
+
 module.exports = {
   parsePath,
   getFileType,
@@ -156,6 +181,8 @@ module.exports = {
   extname,
   markdownParse,
   md5,
+  parseStream,
+  xml2json,
   params(url) {
     url = url.split('?')[1]
     let reg = /(?:&)?([^=]+)=([^&]*)/ig,
